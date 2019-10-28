@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Henry M. Gunn High School Web Site</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Welcome To Our Web Site!"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="body">
+      <div class="row logo-wrapper">
+        <h1 class="logo">Gunn High School</h1>
+        <p class="slogan">As Good As Titans!</p>
+        <a href="#login.html" class="log-in">Admin Login</a>
+      </div>
+      <div class="row nav-links">
+        <a href="#home.html">Home Page</a>
+        <a href="#attendance.html">Attendance Policy</a>
+        <a href="#schedule.html">Bell Schedule</a>
+        <a href="#map.html">Campus Map</a>
+        <a href="#courses.html">Course Catalog</a>
+        <a href="#news.html">News</a>
+        <a href="#contact.html">Contact Us</a>
+      </div>
+      <div class="sidebar-wrapper">
+        <div class="sidebar">
+          <h3>Quick Links</h3>
+          <a href="#pe.html">Physical Education</a>
+          <a href="#math.html">Mathematics</a>
+          <a href="#self.html">SELF</a>
+          <a href="#english.html">English</a>
+          <a href="#science.html">Science</a>
+          <a href="#art.html">Visual & Performing Arts</a>
+          <a href="#language.html">World Languages</a>
+        </div>
+        <div class="not-sidebar" id="main-content"></div>
+      </div>
+      <div class="row footer">
+        780 Arastradero Road<br>
+        Palo Alto, CA 94306<br>
+        <a href="#contact.html">Contact Us</a>
+      </div>
+    </div>
+    <script type="text/javascript">
+      const contentWrapper = document.getElementById('main-content');
+      const cachedPages = {};
+      let currentPage = null;
+      function openPage(page) {
+        if (cachedPages[page]) {
+          contentWrapper.innerHTML = cachedPages[page];
+          currentPage = page;
+        } else {
+          document.body.classList.add('loading');
+          fetch('./content/' + page)
+            .then(r => r.status === 200 ? r.text() : Promise.reject(new Error('Status ' + r.status)))
+            .then(html => {
+              contentWrapper.innerHTML = cachedPages[page] = html;
+              document.body.classList.remove('loading');
+              currentPage = page;
+            })
+            .catch(err => {
+              contentWrapper.innerHTML = `<h1>404</h1><a href="#home.html">Go Back Home</a>`;
+              document.body.classList.remove('loading');
+              currentPage = '404.html';
+            });
+        }
+      }
+      document.body.addEventListener('click', e => {
+        if (e.target.tagName === 'A') {
+          const href = e.target.getAttribute('href');
+          if (href && href[0] === '#') {
+            openPage(href.slice(1));
+            e.preventDefault();
+          }
+        }
+      });
+      openPage('home.html');
+    </script>
+  </body>
+</html>
